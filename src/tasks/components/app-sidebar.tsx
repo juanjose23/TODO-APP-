@@ -27,17 +27,17 @@ const items = [
   },
   {
     title: "Tasks",
-    url: "/task",
+    url: "/tasks",
     icon: Inbox,
   },
   {
     title: "Calendar",
-    url: "/calendar",
+    url: "/tasks/calendar",
     icon: Calendar,
   },
   {
     title: "Team",
-    url: "",
+    url: "/teams",
     icon: Users,
   },
   {

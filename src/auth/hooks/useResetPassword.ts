@@ -33,9 +33,6 @@ export function useResetPassword() {
     const email = new URLSearchParams(window.location.search).get("email");
     const pathParts = window.location.pathname.split('/');
     const token = pathParts[pathParts.length - 1];
-    
-    console.log("Email:", email);
-    console.log("Token:", token);
     const data = {
         token: token,
         email: email,

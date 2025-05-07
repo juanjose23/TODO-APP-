@@ -17,10 +17,17 @@ export const useLogin = () => {
 
         try {
             const response = await authService.login({ email, password });
-
-
-            login(response.user, response.token);
+            console.log("Login response:", response);
+            if (response?.user && response?.token) {
+              
+                login(response.user, response.token);
             
+            } else {
+                throw new Error("Credentials not found ");
+            }
+
+
+          
             navigate("/");
 
         } catch (err: any) {

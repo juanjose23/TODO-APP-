@@ -1,12 +1,12 @@
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar"
-import { AppSidebar } from "../components/app-sidebar";
+import { AppSidebar } from "../tasks/components/app-sidebar";
 import { ModeToggle } from "@/components/ModeToggle";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { NavActions } from "../components/nav-actions"
-import { UserProfileMenu } from "../components/user-profile-menu"
+import { NavActions } from "../tasks/components/nav-actions"
+import { UserProfileMenu } from "../tasks/components/user-profile-menu"
 import { Outlet } from "react-router-dom";
-export default function TaskLayout() {
+export default function AppLayout() {
 
 
   return (
