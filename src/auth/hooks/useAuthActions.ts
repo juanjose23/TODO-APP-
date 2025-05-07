@@ -5,8 +5,8 @@ export const useAuthActions = () => {
   const dispatch = useDispatch();
 
   return {
-    login: (user: { id: string; name: string; email: string }, token: string) => {
-      dispatch(login({ user, token }));
+    login: (user: { id: string; name: string; email: string }, token: string,refreshToken: string) => {
+      dispatch(login({ user, token,refreshToken }));
     },
     logout: () => {
       dispatch(logout());

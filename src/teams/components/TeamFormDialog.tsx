@@ -76,9 +76,6 @@ export default function TeamFormDialog({
                   control={form.control}
                   name="members"
                   render={({ field }) => {
-                    console.log('DATOS SELECCIONADOS')
-                    console.table(field.value);
-
                     return (
                       <FormItem>
                         <FormLabel>Agregar miembros</FormLabel>

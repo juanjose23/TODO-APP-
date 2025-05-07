@@ -19,7 +19,7 @@ export const useRegister = () => {
       const res = await authService.register(data)
 
 
-      login(res.user, res.token)
+      login(res.user, res.token,res.refresh_token)
       navigate("/") 
     } catch (err: any) {
       console.log("Error de validación:", err?.response?.data);

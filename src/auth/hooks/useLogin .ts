@@ -20,7 +20,7 @@ export const useLogin = () => {
             console.log("Login response:", response);
             if (response?.user && response?.token) {
               
-                login(response.user, response.token);
+                login(response.user, response.token, response.refresh_token)
             
             } else {
                 throw new Error("Credentials not found ");

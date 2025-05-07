@@ -22,6 +22,7 @@ export interface LoginDto {
       email: string
     }
     token: string
+    refresh_token:string
   }
 
   export interface RootState {
