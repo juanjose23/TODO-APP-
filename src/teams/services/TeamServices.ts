@@ -1,7 +1,7 @@
 
 // src/auth/services/authService.ts
 import axios from "@/api/axios";
-import { Team } from "../types/TeamTypes";
+import { Invitation, Team } from "../types/TeamTypes";
 
 interface User {
     id: string;
@@ -81,6 +81,24 @@ export const TeamServices = {
             }
         }
     },
+
+    invitationTeam: async (token:string): Promise<Invitation> => {
+        try {
+           const response= await axios.get(`/teams/acceptInvitation/${token}`);
+            return response.data.original; 
+
+
+        } catch (error: any) {
+            if (error.response) {
+                console.error('server responded with error:', error.response.data);
+                throw error.response.data;
+            } else {
+                console.error('Error connecting to server');
+                throw {message:'Connection error'}
+            }
+
+        }
+    }
 
 }
 
