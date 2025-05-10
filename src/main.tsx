@@ -1,17 +1,19 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import { Todo } from './Todo';
-import { BrowserRouter } from 'react-router';
-import { Provider } from 'react-redux';
-import { store } from '@/lib/store/store';
-createRoot(document.getElementById('root')!).render(
+// src/main.tsx o src/index.tsx
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
+import { Todo } from "./Todo";
+import { AppProviders } from "./context/AppProviders"; // Ruta según tu proyecto
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-    <Provider store={store}>
-    <Todo />
-    </Provider>
-
+      <AppProviders>
+        <Todo />
+        <Toaster richColors position="top-right" closeButton />
+      </AppProviders>
     </BrowserRouter>
-  </StrictMode>,
-)
+  </StrictMode>
+);

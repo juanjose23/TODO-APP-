@@ -5,6 +5,7 @@ export interface Team {
     members: { value: string; label: string }[];
     userId: string | undefined;
     isActive: boolean;
+    
 }
 
 export interface Invitation {
@@ -13,7 +14,9 @@ export interface Invitation {
     organizer:string;
     description?: string;
     roles: string;
+    token?:string|undefined
     date?:Date;
+    update?:Date;
     avatar?:string;
     status: "pending" | "accepted" | "declined";
 }

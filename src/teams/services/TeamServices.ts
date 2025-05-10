@@ -82,10 +82,25 @@ export const TeamServices = {
         }
     },
 
-    invitationTeam: async (token:string): Promise<Invitation> => {
+    invitationListTeam: async (userId: string): Promise<Invitation[]> => {
         try {
-           const response= await axios.get(`/teams/acceptInvitation/${token}`);
-            return response.data.original; 
+            const response = await axios.get(`/teams/listInvitation/${userId}`);
+            return response.data.original;
+        } catch (error: any) {
+            if (error.response) {
+                console.error('server responded with error:', error.response.data);
+                throw error.response.data;
+            } else {
+                console.error('Error connecting to server');
+                throw { message: 'Connection error' };
+            }
+        }
+    },
+
+    getInvitationByToken: async (token: string): Promise<Invitation> => {
+        try {
+            const response = await axios.get(`/teams/getInvitationByToken/${token}`);
+            return response.data.original;
 
 
         } catch (error: any) {
@@ -94,9 +109,19 @@ export const TeamServices = {
                 throw error.response.data;
             } else {
                 console.error('Error connecting to server');
-                throw {message:'Connection error'}
+                throw { message: 'Connection error' }
             }
 
+        }
+    },
+
+    invitationResponseStatus: async ({ token, status }: { token: string; status: string }): Promise<boolean> => {
+        try {
+            const response = await axios.post('/teams/invitationResponse', { token, status });
+            console.log(response.status === 200);
+            return response.status === 200;
+        } catch (error: any) {
+            return false;
         }
     }
 

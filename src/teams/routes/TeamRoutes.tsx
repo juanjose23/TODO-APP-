@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import { TeamPage,InvitationPage } from '@/teams/pages';
+import { TeamPage,InvitationDetailPage, InvitationList } from '@/teams/pages';
 import NotFound from '@/errors/pages/NotFound';
 export default function TaskRoutes() {
     return (
@@ -9,8 +9,8 @@ export default function TaskRoutes() {
             <Route path='/notfound' element={<NotFound />} />
             <Route path="*" element={<Navigate to="/notfound" />} />
             <Route index element={<TeamPage />} />
-            <Route path='/invite' element={<InvitationPage/>} />
-
+            <Route path='/invite' element={<InvitationDetailPage/>} />
+            <Route path='/invite/list' element={<InvitationList/>} />
         </Routes>
     )
 }
