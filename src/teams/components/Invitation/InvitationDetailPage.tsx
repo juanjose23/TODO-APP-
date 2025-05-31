@@ -3,18 +3,18 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Mail, Clock, Check, X } from "lucide-react"
-import { toast } from "sonner"
-import { useInvitationTeam } from "@/teams/hooks/useInvitationTeam"
+import { toast } from "sonner"  
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useInvitationContext } from "../../context/InvitationContext"
 
 type InvitationStatus = "pending" | "accepted" | "declined"
 
 export default function InvitationDetailPage() {
-  const { invitation, invitationError, invitationLoading } = useInvitationTeam()
+  const { invitation, invitationError, invitationLoading } = useInvitationContext()
   const navigate = useNavigate()
 
 
@@ -149,7 +149,7 @@ export default function InvitationDetailPage() {
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage src={invitation.avatar || "/placeholder.svg"} alt={invitation.name} />
-                  <AvatarFallback className="text-lg">{invitation.organizer.substring(0, 2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback className="text-lg">{invitation.organizer?.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="text-lg font-semibold">{invitation.organizer}</h3>

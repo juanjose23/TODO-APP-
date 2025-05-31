@@ -1,80 +1,138 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TeamServices } from "../services/TeamServices";
 import { Invitation } from "../types/TeamTypes";
 import { RootState } from "@/lib/store/store";
 import { useSelector } from "react-redux";
+import { useSlugFromUrl } from "@/lib/slug";
+
+type InvitationState = {
+  invitation?: Invitation;
+  invitationList?: Invitation[];
+  invitationListTeam?: Invitation[];
+  invitationListLoadingTeam: boolean;
+  invitationLoading: boolean;
+  invitationListLoading: boolean;
+  invitationError: string | null;
+  invitationListError: string | null;
+  invitationListErrorTeam: string | null;
+};
 
 export function useInvitationTeam() {
-  const [invitationState, setInvitationState] = useState({
-    invitation: undefined as Invitation | undefined,
-    invitationList: undefined as Invitation[] | undefined,
+  const [state, setState] = useState<InvitationState>({
+    invitation: undefined,
+    invitationList: undefined,
+    invitationListTeam: undefined,
+    invitationListLoadingTeam: false,
     invitationLoading: false,
     invitationListLoading: false,
-    invitationError: null as string | null,
-    invitationListError: null as string | null,
+    invitationError: null,
+    invitationListError: null,
+    invitationListErrorTeam: null,
   });
+
+  const slug = useSlugFromUrl();
+  const idFromSlug = slug ? slug.split("-").pop() ?? null : null;
 
   const currentUser = useSelector((state: RootState) => state.auth.user);
 
-  const loadInvitation = async (token: string) => {
-    setInvitationState(prev => ({ ...prev, invitationLoading: true }));
-    
+  // Helper para actualizar estado parcial
+  const updateState = (partial: Partial<InvitationState>) => {
+    setState(prev => ({ ...prev, ...partial }));
+  };
+
+  const loadInvitationListTeam = useCallback(async (teamId: string | null) => {
+    if (!teamId) return; 
+
+    updateState({ invitationListLoadingTeam: true, invitationListErrorTeam: null });
+
     try {
-      const userInvitation = await TeamServices.getInvitationByToken(token);
-      if (userInvitation.name === "Invitation not found") {
+      const invitations = await TeamServices.getInvitationsByTeamId(teamId);
+
+      if (Array.isArray(invitations)) {
+        invitations.forEach(inv => {
+          if (inv.date) inv.date = new Date(inv.date);
+          if (inv.update) inv.update = new Date(inv.update);
+        });
+        updateState({ invitationListTeam: invitations });
+      } else {
+        updateState({ invitationListErrorTeam: "No se encontraron invitaciones." });
+      }
+    } catch {
+      updateState({ invitationListErrorTeam: "No se pudieron cargar las invitaciones." });
+    } finally {
+      updateState({ invitationListLoadingTeam: false });
+    }
+  }, []);
+
+  const loadInvitation = useCallback(async (token: string) => {
+    updateState({ invitationLoading: true, invitationError: null });
+
+    try {
+      const invitation = await TeamServices.getInvitationByToken(token);
+
+      if (invitation.name === "Invitation not found") {
         throw new Error("La invitación no existe o ha expirado.");
       }
 
-      userInvitation.date = userInvitation.date ? new Date(userInvitation.date) : undefined;
-      setInvitationState(prev => ({ ...prev, invitation: userInvitation }));
+      invitation.date = invitation.date ? new Date(invitation.date) : undefined;
+      updateState({ invitation });
     } catch (error: any) {
-      setInvitationState(prev => ({ ...prev, invitationError: error.message }));
+      updateState({ invitationError: error.message });
     } finally {
-      setInvitationState(prev => ({ ...prev, invitationLoading: false }));
+      updateState({ invitationLoading: false });
     }
-  };
+  }, []);
 
-  const loadInvitationList = async () => {
-    if (!currentUser || !currentUser.id) return;
+  const loadInvitationList = useCallback(async () => {
+    if (!currentUser?.id) return;
 
-    setInvitationState(prev => ({ ...prev, invitationListLoading: true }));
+    updateState({ invitationListLoading: true, invitationListError: null });
 
     try {
-      const userInvitationList = await TeamServices.invitationListTeam(currentUser.id);
+      const invitations = await TeamServices.getInvitationsByUserId(currentUser.id);
 
-      if (Array.isArray(userInvitationList)) {
-        userInvitationList.forEach(inv => {
+      if (Array.isArray(invitations)) {
+        invitations.forEach(inv => {
           if (inv.date) inv.date = new Date(inv.date);
-           if (inv.update) inv.update = new Date(inv.update);
+          if (inv.update) inv.update = new Date(inv.update);
         });
-        setInvitationState(prev => ({ ...prev, invitationList: userInvitationList }));
+        updateState({ invitationList: invitations });
       } else {
-        setInvitationState(prev => ({ ...prev, invitationListError: "No se encontraron invitaciones." }));
+        updateState({ invitationListError: "No se encontraron invitaciones." });
       }
-    } catch (error: any) {
-      setInvitationState(prev => ({ ...prev, invitationListError: "No se pudieron cargar las invitaciones." }));
+    } catch {
+      updateState({ invitationListError: "No se pudieron cargar las invitaciones." });
     } finally {
-      setInvitationState(prev => ({ ...prev, invitationListLoading: false }));
+      updateState({ invitationListLoading: false });
     }
-  };
+  }, [currentUser?.id]);
 
+  // Carga invitación por token en query params solo una vez al montar
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
     if (token) {
       loadInvitation(token);
     }
-  }, []); // Only run once on mount
+  }, [loadInvitation]);
 
+  // Carga invitaciones del equipo cuando cambia el slug y tenemos id válido
+  useEffect(() => {
+    if (idFromSlug) {
+      loadInvitationListTeam(idFromSlug);
+    }
+  }, [idFromSlug, loadInvitationListTeam]);
+
+  // Carga lista de invitaciones para usuario logueado
   useEffect(() => {
     loadInvitationList();
-  }, [currentUser]); // Rerun on user change
+  }, [loadInvitationList]);
 
-  const respondToInvitation = async (token: string, status: "accepted" | "declined"): Promise<boolean> => {
+  const respondToInvitation = useCallback(async (token: string, status: "accepted" | "declined"): Promise<boolean> => {
     try {
       const success = await TeamServices.invitationResponseStatus({ token, status });
       if (success) {
-        setInvitationState(prev => ({
+        setState(prev => ({
           ...prev,
           invitationList: prev.invitationList?.map(item =>
             item.token === token ? { ...item, status } : item
@@ -87,10 +145,10 @@ export function useInvitationTeam() {
       console.error("Error al actualizar el estado de la invitación", error);
       return false;
     }
-  };
+  }, []);
 
   return {
-    ...invitationState,
+    ...state,
     respondToInvitation,
   };
 }

@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { useInvitationContext } from "../context/InvitationContext"
+import { useInvitationContext } from "../../context/InvitationContext"
 import { format } from "date-fns"
 
 type InvitationStatus = "pending" | "accepted" | "declined"
@@ -192,7 +192,7 @@ export default function InvitationList({ onAccept, onReject }: InvitationListPro
                   <Avatar className="h-10 w-10 border">
                     <AvatarImage src={invitation.avatar || "/placeholder.svg"} alt={invitation.organizer} />
                     <AvatarFallback className="bg-primary/10 text-primary">
-                      {invitation.organizer.substring(0, 2).toUpperCase()}
+                      {invitation.organizer?.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>

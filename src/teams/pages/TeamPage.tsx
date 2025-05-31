@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react"
 import type { Team } from "@/teams/types/TeamTypes"
 import { TeamServices } from "@/teams/services/TeamServices"
-import { DeleteTeamDialog } from "@/teams/components/DeleteTeamDialog"
-import TeamFormDialog from "@/teams/components/TeamFormDialog"
-import { TeamSearch } from "@/teams/components/TeamSearch"
+import { DeleteTeamDialog } from "@/teams/components/team/DeleteTeamDialog"
+import TeamFormDialog from "@/teams/components/team/TeamFormDialog"
+import { TeamSearch } from "@/teams/components/team/TeamSearch"
 import { PlusCircle, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
-import { TeamList } from "../components/TeamList"
+import { TeamList } from "../components/team/TeamList"
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState<Team[]>([])
@@ -38,14 +37,16 @@ export default function TeamsPage() {
   }, [])
 
   useEffect(() => {
-    const filtered = teams.filter((team) => team.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filtered = teams.filter((team) =>
+      team.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     setFilteredTeams(filtered)
   }, [searchTerm, teams])
 
   const handleDeleteTeam = async () => {
     if (!teamToDelete) return
     try {
-      // await TeamServices.deleteTeam(teamToDelete.id);
+      // await TeamServices.deleteTeam(teamToDelete.id)
       setTeams((prev) => prev.filter((t) => t.id !== teamToDelete.id))
       setTeamToDelete(null)
       setIsDeleteDialogOpen(false)
@@ -55,23 +56,8 @@ export default function TeamsPage() {
   }
 
   const handleCreateTeam = (team: Team) => {
-    setTeams((prev) => [...prev, team]);
-    setIsCreateDialogOpen(false);
-  };
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
+    setTeams((prev) => [...prev, team])
+    setIsCreateDialogOpen(false)
   }
 
   return (
@@ -114,18 +100,16 @@ export default function TeamsPage() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : filteredTeams.length > 0 ? (
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {filteredTeams.map((team) => (
-              <motion.div key={team.id} variants={item}>
-                 <TeamList teams={teams} onDelete={() => {}} />
-              </motion.div>
-            ))}
-          </motion.div>
+          <TeamList
+            teams={filteredTeams}
+            onDelete={(id) => {
+              const team = teams.find((t) => t.id === id)
+              if (team) {
+                setTeamToDelete(team)
+                setIsDeleteDialogOpen(true)
+              }
+            }}
+          />
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="bg-muted/50 rounded-full p-6 mb-4">
@@ -154,7 +138,6 @@ export default function TeamsPage() {
       />
 
       <TeamFormDialog
-      
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
         onCreate={handleCreateTeam}

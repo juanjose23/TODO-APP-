@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { MultiSelect } from "./multi-select";
+import { MultiSelect } from "../multi-select";
 
 import { useTeamFormDialog } from "@/teams/hooks/useTeamFormDialog";
 import type { Team } from "@/teams/types/TeamTypes";
@@ -45,7 +45,7 @@ export default function TeamFormDialog({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[600px] border-0 p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-6">
-          <DialogTitle className="text-xl">Crear nuevo equipo</DialogTitle>
+          <DialogTitle className="text-xl">Create Teams</DialogTitle>
           <DialogDescription>
             Crea un equipo y añade miembros para colaborar
           </DialogDescription>

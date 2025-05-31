@@ -14,33 +14,46 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Bell, CreditCard, HelpCircle, LogOut, Settings, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function UserProfileMenu() {
   const logoutUser = useLogout();
+  const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.auth);
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if ( event.shiftKey && event.key.toLowerCase() === "p") {
+ useEffect(() => {
+  const handleKeyDown = (event: KeyboardEvent) => {
+    const key = event.key.toLowerCase();
+
+    switch (true) {
+      case event.shiftKey && key === "p":
         event.preventDefault();
         console.log("Abrir perfil");
-      }
-      if (event.shiftKey && event.key.toLowerCase() === "b") {
+        break;
+
+      case event.shiftKey && key === "b":
         event.preventDefault();
-        console.log("Abrir facturación");
-      }
-      if (event.shiftKey && event.key.toLowerCase() === "s") {
+        navigate("/teams/invite/list");
+        break;
+
+      case event.shiftKey && key === "s":
         event.preventDefault();
         console.log("Abrir configuración");
-      }
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "q") {
+        break;
+
+      case event.ctrlKey && event.shiftKey && key === "q":
         event.preventDefault();
         logoutUser();
-      }
-    };
+        break;
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [logoutUser]);
+      default:
+        break;
+    }
+  };
+
+  window.addEventListener("keydown", handleKeyDown);
+  return () => window.removeEventListener("keydown", handleKeyDown);
+}, [logoutUser, navigate]);
+
 
   
   const getUserInitials = () => {
@@ -76,7 +89,7 @@ export function UserProfileMenu() {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <CreditCard className="mr-2 h-4 w-4" />
-            <span>Billing</span>
+            <span>Invitation</span>
             <DropdownMenuShortcut>⇧+B</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>

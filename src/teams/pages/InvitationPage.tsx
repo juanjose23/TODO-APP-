@@ -1,5 +1,5 @@
 import { toast } from "sonner"
-import InvitationList from "@/teams/components/InvitationList"
+import InvitationList from "@/teams/components/Invitation/InvitationList"
 import { useInvitationContext } from "../context/InvitationContext";
 
 export default function HomePage() {

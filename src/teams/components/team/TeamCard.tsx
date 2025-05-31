@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Users, ChevronRight, Edit, Trash2 } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-
+import { Link } from "react-router-dom"
+import { generateSlug } from "@/lib/slug";
 export function TeamCard({ team, onDeleteClick }: { team: any; onDeleteClick: () => void }) {
   const getInitials = (name: string) =>
     name
@@ -13,6 +14,7 @@ export function TeamCard({ team, onDeleteClick }: { team: any; onDeleteClick: ()
       .join("")
       .toUpperCase()
       .substring(0, 2)
+  const teamSlug = generateSlug(team.name, team.id!);
 
   return (
     <div className="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 hover:bg-muted/30 rounded-lg transition-colors gap-4">
@@ -31,12 +33,15 @@ export function TeamCard({ team, onDeleteClick }: { team: any; onDeleteClick: ()
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto mt-2 sm:mt-0">
         <div className="flex items-center text-sm text-muted-foreground sm:mr-4">
           <Users className="h-4 w-4 mr-1" />
-          <span>{team.members} miembros</span>
+          <span>{team.totalUsersCount} members</span>
         </div>
         <div className="flex items-center gap-2 mt-2 sm:mt-0 w-full sm:w-auto justify-between sm:justify-end">
-          <Button variant="ghost" size="sm" className="sm:whitespace-nowrap">
-            Ver <ChevronRight className="ml-1 h-4 w-4" />
-          </Button>
+         <Link to={`${teamSlug}`}> 
+
+            <Button variant="ghost" size="sm" className="sm:whitespace-nowrap">
+              Ver <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          </Link>
           {team.role === "Owner" && (
             <div className="flex items-center">
               <Button variant="ghost" size="icon">

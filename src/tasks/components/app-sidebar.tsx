@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, LayoutDashboard, Search, Settings, Users } from "lucide-react";
+import { Calendar, Home, Inbox, LayoutDashboard, Users } from "lucide-react";
 import { Link, useLocation } from "react-router-dom"; // Importa useLocation
 import {
   Sidebar,
@@ -40,16 +40,7 @@ const items = [
     url: "/teams",
     icon: Users,
   },
-  {
-    title: "Search",
-    url: "",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "",
-    icon: Settings,
-  },
+
 ];
 
 export function AppSidebar() {
